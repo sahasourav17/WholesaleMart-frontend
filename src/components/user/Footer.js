@@ -43,7 +43,7 @@ export const Footer = () => {
                   </p>
                   <div className="text-sm">
                     <p>Email Us</p>
-                    <p>Wholesale Mart@gmail.com</p>
+                    <p>wholesalemart@gmail.com</p>
                   </div>
                 </div>
               </div>
