@@ -1,3 +1,3 @@
 export const setTitle = (title) => {
-  document.title = `${title} - Wholesale Mart`;
+  document.title = `Wholesale Mart-${title}`;
 };

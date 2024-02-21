@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { AiOutlineBug } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../../components/common/Button/Button";
 import { Form } from "../../components/common/Form/Form";
@@ -43,10 +42,10 @@ export const UserLogin = () => {
     <div className="w-full h-screen flex justify-center items-center">
       <div className="mx-2 sm:mx-0 sm:w-[350px] bg-slate-100 px-2 py-4 rounded-md">
         <div className="flex flex-col items-center justify-center pb-4">
-          <span className="text-green-600 text-5xl pb-1">
-            <AiOutlineBug />
+          <span className="w-20 pb-1">
+            <img src='logo-bg.png' alt="logo"/>
           </span>
-          <h3 className="text-2xl font-semibold">Login Your Account</h3>
+          <h3 className="text-2xl font-semibold">Welcome Back</h3>
         </div>
         <Form onSubmit={userLoginHandler}>
           <FormInput

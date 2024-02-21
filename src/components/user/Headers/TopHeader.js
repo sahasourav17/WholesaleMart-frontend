@@ -17,7 +17,7 @@ export const TopHeader = () => {
           <p className="flex items-center">
             <AiOutlineCar /> <span className="ps-1">Track Your Order</span>
           </p>
-          <p className="flex items-center">
+          <p className="flex items-center sm:hidden">
             <AiOutlineRadarChart /> <span className="ps-1">All Offer</span>
           </p>
         </div>

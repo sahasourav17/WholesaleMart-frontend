@@ -29,7 +29,7 @@ export const ProductByCategory = () => {
 
   if (!isLoading && isError)
     content = (
-      <h3 className=" uppercase font-medium text-red-600">
+      <h3 className=" uppercase font-medium text-red-600 text-center">
         something went wrong!
       </h3>
     );

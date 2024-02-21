@@ -25,7 +25,7 @@ export const FeaturedProduct = () => {
 
   if (!isLoading && isError)
     content = (
-      <h3 className=" uppercase font-medium text-red-600">
+      <h3 className="text-center uppercase font-medium text-red-600">
         something went wrong!
       </h3>
     );

@@ -19,7 +19,7 @@ export const BestCategory = () => {
 
   if (!isLoading && isError)
     content = (
-      <h3 className=" uppercase container font-medium text-red-600">
+      <h3 className="text-center uppercase container font-medium text-red-600">
         something went wrong!
       </h3>
     );
