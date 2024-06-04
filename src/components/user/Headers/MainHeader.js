@@ -1,189 +1,178 @@
 import React, { useState } from "react";
-import { AiOutlineShopping, AiOutlineUser } from "react-icons/ai";
-import { BsSearch } from "react-icons/bs";
-import { FaAlignRight } from "react-icons/fa";
+import { FaSearch, FaShoppingCart, FaTimes, FaUserAlt } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
 import {
   selectUserAccessToken,
   selectUserInfo,
 } from "../../../features/auth/userAuthSelectors";
-import { openCart } from "../../../features/cart/cartOpenSlice";
 import { selectCartItems } from "../../../features/cart/cartSelectors";
-import { Menu } from "./Menu";
-import { MobileMenu } from "./MobileMenu";
+import toast from "react-hot-toast";
+import { userLoggedOut } from "../../../features/auth/userAuthSlice";
+import { Link, useNavigate } from "react-router-dom";
+import { openCart } from "../../../features/cart/cartOpenSlice";
 
 export const MainHeader = () => {
   const cartItems = useSelector(selectCartItems);
   const userAccessToken = useSelector(selectUserAccessToken);
   const userInfo = useSelector(selectUserInfo);
-  const [searchValue, setSearchValue] = useState("");
-  const [mobileMenu, setMobileMenu] = useState(false);
-  const [mobileSerach, setMobileSearch] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  //cart open handler
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchText !== "") {
+      setSearchText("");
+      navigate(`/search?search=${searchText}`);
+    }
+  };
+
+  const handleLogout = () => {
+    dispatch(userLoggedOut());
+    localStorage.removeItem("userAuth");
+    toast.success("Logged Out Successfully");
+    navigate("/login");
+  };
+
   const cartOpenHandler = () => {
     dispatch(openCart(true));
   };
 
-  //search product handler
-  const searchHeandler = (e) => {
-    e.preventDefault();
-    if (searchValue !== "") {
-      setMobileSearch(false);
-      navigate(`/search?search=${searchValue}`);
-    }
-  };
+  const cartItemCount = cartItems.length > 0 ? cartItems.length : 0;
 
   return (
-    <div className="w-full h-14 bg-[#f85606] text-gray-100  px-2 sm:px-0 sticky top-0 z-40 shadow-md shadow-gray-400 ">
-      <div className="container mx-auto flex w-full h-full items-center justify-between space-x-3 relative">
-        <div className="flex items-center space-x-3">
-          {/* mobile left side menu */}
-          <div
-            className="sm:hidden block"
-            onClick={() => setMobileMenu(!mobileMenu)}
-          >
-            <FaAlignRight />
-          </div>
-          {/* mobile menu */}
-          {mobileMenu && (
-            <MobileMenu setMobileMenu={setMobileMenu} mobileMenu={mobileMenu} />
-          )}
-          {/* logo area */}
-          <div className="xl:min-w-[300px]">
-            <Link to="/">
-              <h1 className="text-2xl text-white font-semibold">
-                Wholesale Mart
-              </h1>
-            </Link>
-          </div>
+    <nav className="bg-white shadow-md sticky top-0 z-50">
+      <div className="container mx-auto px-4 lg:px-8 py-3 flex justify-between items-center">
+        <div className="text-xl font-bold">
+          <Link to="/">ElectraMart</Link>
         </div>
-        {/* search bar */}
-        <form className="hidden sm:block sm:w-full" onSubmit={searchHeandler}>
-          <div className="flex items-center  bg-gray-200 rounded-md ring-1 ring-emerald-800">
+
+        {/* Search Bar */}
+        <div className="hidden md:flex flex-1 max-w-xs relative">
+          <form className="relative w-64" onSubmit={handleSearch}>
             <input
-              type="search"
-              name="search"
-              value={searchValue}
-              placeholder="Search Product..."
-              className="bg-transparent text-black px-2 py-2 focus:outline-none sm:w-full"
-              onChange={(e) => setSearchValue(e.target.value)}
+              type="text"
+              placeholder="Search..."
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              className="w-full p-2 pl-10 border border-gray-700 rounded-md"
             />
-            <button type="submit" className="pr-3 text-lg text-[#f85606]">
-              <BsSearch />
-            </button>
-          </div>
-        </form>
-
-        {/* right side */}
-        <div className="flex items-center space-x-3 relative">
-          {userAccessToken && userInfo?._id ? (
-            <>
-              <div className="items-center space-x-2 group hover:cursor-pointer hidden sm:flex">
-                <div className="w-7 h-7 ">
-                  <img
-                    src={
-                      userInfo?.profilePic !== null
-                        ? userInfo.profilePic
-                        : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-                    }
-                    alt="profile"
-                    className="w-full h-full rounded-full"
-                  />
-                </div>
-                <div className="whitespace-nowrap leading-4">
-                  <p className="text-[12px]">
-                    Hello,{userInfo.name.substring(0, 9)}
-                  </p>
-                  <p className="text-[13px] font-semibold capitalize select-none">
-                    Orders & Accout
-                  </p>
-                </div>
-                {/* user account menu */}
-                <Menu />
-              </div>
-
-              <Link
-                to="/checkout"
-                className="hidden sm:flex items-center hover:bg-orange-700/50 p-2 rounded-md ease-out duration-100"
-              >
-                <span className="text-base font-medium mr-0 sm:mr-3">
-                  CheckOut
-                </span>
-              </Link>
-            </>
-          ) : (
-            <div className="hidden sm:flex items-center">
-              <Link
-                to="/login"
-                className="flex hover:bg-orange-700/50 p-2 rounded-md ease-out duration-100"
-              >
-                <span className="text-2xl text-white pr-1">
-                  <AiOutlineUser />
-                </span>
-                <span className="text-base font-medium">Login</span>
-              </Link>
-              <span className="px-1"> |</span>
-              <Link
-                to="/register"
-                className=" hover:bg-orange-700/50 p-2 rounded-md ease-out duration-100"
-              >
-                <span className="text-base font-medium whitespace-nowrap">
-                  Sign Up
-                </span>
-              </Link>
+            <div className="absolute left-3 top-3 text-gray-600">
+              {searchText ? (
+                <FaTimes
+                  className="cursor-pointer"
+                  onClick={() => setSearchText("")}
+                />
+              ) : (
+                <FaSearch />
+              )}
             </div>
-          )}
+          </form>
+        </div>
 
-          {/* search icon for small devices */}
-          <button
-            type="submit"
-            className="pr-2 text-lg text-white block sm:hidden"
-            onClick={() => setMobileSearch(!mobileSerach)}
-          >
-            <BsSearch />
-          </button>
-
-          {/* cart */}
+        {/* Icons */}
+        <div className="flex items-center space-x-4">
           <div
-            className="flex items-center justify-center cursor-pointer"
-            onClick={cartOpenHandler}
+            className="relative md:hidden"
+            onClick={() => setIsSearchOpen(!isSearchOpen)}
           >
-            <span className="text-4xl text-white sm:pb-1 absolute">
-              <AiOutlineShopping />
+            <FaSearch className="text-gray-600 w-6 h-6" />
+          </div>
+          <div
+            className="relative"
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          >
+            {userAccessToken && userInfo?._id ? (
+              <img
+                src={userInfo.profilePic}
+                alt=""
+                className="w-8 h-8 rounded-full cursor-pointer"
+              />
+            ) : (
+              <FaUserAlt className="w-6 h-6 cursor-pointer text-gray-600" />
+            )}
+            {isDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+                <div className="p-2">
+                  {userAccessToken && userInfo?._id ? (
+                    <>
+                      <div className="flex items-center space-x-2">
+                        <img
+                          src={userInfo.profilePic}
+                          alt="Profile"
+                          className="w-8 h-8 rounded-full"
+                        />
+                        <span className="font-semibold">{userInfo?.name}</span>
+                      </div>
+                      <hr className="my-2" />
+                      <button className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">
+                        Profile
+                      </button>
+                      <Link
+                        to="/my-order"
+                        className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                      >
+                        Orders
+                      </Link>
+                      <Link
+                        to="/checkout"
+                        className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                      >
+                        Checkout
+                      </Link>
+                      <button
+                        onClick={handleLogout}
+                        className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                      >
+                        Logout
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        to="/login"
+                        className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                      >
+                        Login
+                      </Link>
+                      <Link
+                        to="/register"
+                        className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                      >
+                        Sign Up
+                      </Link>
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="relative cursor-pointer" onClick={cartOpenHandler}>
+            <FaShoppingCart className="text-gray-600 w-6 h-6" />
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+              {cartItemCount}
             </span>
-            <p className="relative left-1 bottom-4 w-5 h-5 flex items-center justify-center bg-gray-800 text-white rounded-full">
-              <span>{cartItems.length > 0 ? cartItems.length : "0"}</span>
-            </p>
           </div>
         </div>
       </div>
-      {/* this form for mobile devices */}
-      <div className={mobileSerach ? "block" : "hidden"}>
-        <form
-          className="sm:hidden block w-full absolute top-3 left-0"
-          onSubmit={searchHeandler}
-        >
-          <div className="flex items-center bg-gray-200 rounded-md ring-1 ring-emerald-800 mx-2">
-            <input
-              type="search"
-              name="search"
-              value={searchValue}
-              placeholder="Search Product..."
-              className="bg-transparent text-black px-2 py-2 focus:outline-none"
-              onChange={(e) => setSearchValue(e.target.value)}
-            />
 
-            <button type="submit" className="pr-3 text-lg text-[#f85606]">
-              <BsSearch />
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+      {/* Mobile Search Bar */}
+      {isSearchOpen && (
+        <div className="md:hidden bg-white border-t border-gray-200">
+          <form className="flex items-center p-4" onSubmit={handleSearch}>
+            <input
+              type="text"
+              placeholder="Search..."
+              className="w-full p-2 border border-gray-300 rounded-md"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+            />
+          </form>
+        </div>
+      )}
+    </nav>
   );
 };
